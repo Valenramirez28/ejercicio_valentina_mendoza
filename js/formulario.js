@@ -2,43 +2,18 @@ const formulario = document.getElementById('formulario');
 const inputs = document.querySelectorAll('#formulario input');
 
 const expresiones = {
-	codigo_prest: /^.{4}$/, 
-	nombre: /^[a-zA-ZÀ-ÿ\s]{4,30}$/,
-    telefono: /^.{10,12}$/,
-	password: /^.{8}$/, 
-	correo: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
-	
+	km_inicial: /^[a-zA-Z0-9]{3,20}$/
 }
 
 const campos = {
-	codigo_prest: false,
-	nombre: false,
-	password: false,
-	correo: false,
-	telefono: false
+	km_inicial: false,
 	
 }
 
 const validarFormulario = (e) => {
 	switch (e.target.name) {
-		case "codigo_prest":
-			validarCampo(expresiones.codigo_prest, e.target, 'codigo_prest');
-		break;
-		case "nombre":
-			validarCampo(expresiones.nombre, e.target, 'nombre');
-		break;
-        case "telefono":
-			validarCampo(expresiones.telefono, e.target, 'telefono');
-		break;
-        case "correo":
-			validarCampo(expresiones.correo, e.target, 'correo');
-		break;
-		case "password":
-			validarCampo(expresiones.password, e.target, 'password');
-			validarPassword2();
-		break;
-		case "password2":
-			validarPassword2();
+		case "km_inicial":
+			validarCampo(expresiones.km_inicial, e.target, 'km_inicial');
 		break;
 		
 		// case "telefono":
@@ -93,31 +68,32 @@ inputs.forEach((input) => {
 });
 
 formulario.addEventListener('submit', (e) => {
-	e.preventDefault();
-		var cod = document.getElementById('codigo_prest').value;
-		var nom = document.getElementById('nombre').value;
-        var tel = document.getElementById('telefono').value;
-        var email = document.getElementById('correo').value;
-		var pas = document.getElementById('password').value;
-        var depor = document.getElementById('id_deporte').value;
+    e.preventDefault();
+    const veh = document.getElementById('nom_vehiculo').value;
+    const nom = document.getElementById('nombre').value;
+    const des = document.getElementById('id_destino').value;
+    const km = document.getElementById('km_inicial').value;
+    const feini = document.getElementById('fecha_ini').value;
+    const fefin = document.getElementById('fecha_fin').value;
 
-	const terminos = document.getElementById('terminos');
-	if(campos.codigo_prest && campos.nombre && campos.password && campos.telefono && campos.correo && terminos.checked ){
-		formulario.reset();
-		console.log(cod);console.log(nom);console.log(pas);console.log(tel);console.log(email);console.log(depor);;
-		$.post ("registro.php?cod=datos",{doc: doc, nom: nom, pas: pas, telefono:tel, email: email, depor: depor}, function(document){$("#mensaje").html(document);
-		
-		}),
-		
-		document.getElementById('formulario__mensaje-exito').classList.add('formulario__mensaje-exito-activo');
-		setTimeout(() => {
-			document.getElementById('formulario__mensaje-exito').classList.remove('formulario__mensaje-exito-activo');
-		}, 5000);
+    // Validar si los campos son válidos
+    if (campos['km_inicial']) {
+        $.post("registro.php", { id_vehiculo: veh, nombre: nom, id_destino: des, km_inicial: km, fecha_ini: feini, fecha_fin: fefin }, function (document) {
+            $("#mensaje").html(document);
+        });
 
-		document.querySelectorAll('.formulario__grupo-correcto').forEach((icono) => {
-			icono.classList.remove('formulario__grupo-correcto');
-		});
-	} 
+        document.getElementById('formulario__mensaje-exito').classList.add('formulario__mensaje-exito-activo');
+        setTimeout(() => {
+            document.getElementById('formulario__mensaje-exito').classList.remove('formulario__mensaje-exito-activo');
+        }, 5000);
+
+        document.querySelectorAll('.formulario__grupo-correcto').forEach((icono) => {
+            icono.classList.remove('formulario__grupo-correcto');
+        });
+    } else {
+        console.log('Hay campos inválidos');
+    }
+	
 });
 
 
